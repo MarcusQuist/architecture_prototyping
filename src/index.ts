@@ -8,12 +8,21 @@ const port = 80;
 const isNosql = true;
 
 export interface Example extends Request {
-  example: any;
+  example: string;
 }
 app.use(bodyParser.json());
-app.post("/saveMessage", (req: Request, res: any) => {
-  let message: message = req.body;
+app.post("/saveMessage", (req: any, res: any) => {
+  const message: message = req.body;
   console.log("REQ", message);
+  if (isNosql) {
+  } else {
+  }
+  res.send("Express + TypeScript Server");
+});
+
+app.get("/getMessages/:id", (req: any, res: any) => {
+  const chatroomID = req.params.id;
+  console.log("REQ", chatroomID);
   if (isNosql) {
   } else {
   }
