@@ -4,6 +4,6 @@ export interface message {
 }
 
 export interface database {
-    saveMessage: (message: message) => string,
-    getMessages: (chatroomID: number) => Array<message>
+    saveMessage: (message: message) => Promise<string>,
+    getMessages: (chatroomID: number) => Promise<Array<message>>
 }
