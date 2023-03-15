@@ -1,24 +1,23 @@
-import { Request, Response, NextFunction } from "express"
-const express = require('express');
-
+import { Request, Response, NextFunction } from "express";
+import { message } from "./database";
+const express = require("express");
+var bodyParser = require("body-parser");
 const app = express();
 const port = 80;
 
 const isNosql = true;
 
 export interface Example extends Request {
-  example: any
+  example: any;
 }
-
-app.post('/saveMessage', (req: Example, res: any) => {
-    console.log("REQ", req.example)
-    if (isNosql) {
-        
-    }
-    else {
-        
-    }
-  res.send('Express + TypeScript Server');
+app.use(bodyParser.json());
+app.post("/saveMessage", (req: Request, res: any) => {
+  let message: message = req.body;
+  console.log("REQ", message);
+  if (isNosql) {
+  } else {
+  }
+  res.send("Express + TypeScript Server");
 });
 
 app.listen(port, () => {
