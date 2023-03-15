@@ -10,11 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const noSql_1 = require("./noSql");
+const relational_1 = require("./relational");
 const express = require("express");
 var bodyParser = require("body-parser");
 const port = 80;
 const isNosql = true;
 const app = express();
+const relationalInstance = new relational_1.relational();
 app.use(bodyParser.json());
 app.post("/saveMessage", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const message = req.body;
@@ -23,6 +25,7 @@ app.post("/saveMessage", (req, res) => __awaiter(void 0, void 0, void 0, functio
         noSqlInstance.saveMessage(message).then((res) => console.log(res));
     }
     else {
+        relationalInstance.saveMessage(message).then();
     }
     res.send("Express + TypeScript Server");
 }));
@@ -33,6 +36,7 @@ app.get("/getMessages/:id", (req, res) => {
         noSqlInstance.getMessages(chatroomID).then();
     }
     else {
+        relationalInstance.getMessages(chatroomID).then();
     }
     res.send("Express + TypeScript Server");
 });
