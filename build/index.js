@@ -15,7 +15,7 @@ app.post("/saveMessage", (req, res) => {
     }
     res.send("Express + TypeScript Server");
 });
-app.get("/getMessage/:id", (req, res) => {
+app.get("/getMessages/:id", (req, res) => {
     const chatroomID = req.params.id;
     console.log("REQ", chatroomID);
     if (isNosql) {
