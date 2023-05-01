@@ -127,8 +127,7 @@ def abstracted_to_top_level(G, depth=1):
         select_menu=True,
     )
     for node in G.nodes:
-        print(node)
-        aG.add_node(node["id"])
+        aG.add_node(top_level_package(node["id"], depth))
     for edge in G.edges:
         src = top_level_package(edge["from"], depth)
         dst = top_level_package(edge["to"], depth)
@@ -171,7 +170,7 @@ def abstracted_to_top_level(G, depth=1):
         target = edge["to"]
         key = (source, target)
         count = edge_counts[key]
-        edge["width"] = count * 0.02
+        edge["width"] = count * 0.1
 
     return filteredAg
 
@@ -179,15 +178,16 @@ def abstracted_to_top_level(G, depth=1):
 from IPython.display import display, HTML
 
 DG = dependencies_graph()
-DG.toggle_physics(True)
-DG.prep_notebook()
-DG.force_atlas_2based()
-DG.show_buttons(filter_=["physics"])
-DG.show("./page.html")
 
-# ADG = abstracted_to_top_level(DG, 2)
-# ADG.toggle_physics(False)
-# ADG.prep_notebook()
-# ADG.force_atlas_2based()
-# ADG.show_buttons(filter_=["physics"])
-# ADG.show("./page.html")
+# DG.toggle_physics(True)
+# DG.prep_notebook()
+# DG.force_atlas_2based()
+# DG.show_buttons(filter_=["physics"])
+# DG.show("./page.html")
+
+ADG = abstracted_to_top_level(DG, 3)
+ADG.toggle_stabilization(True)
+ADG.toggle_physics(False)
+ADG.prep_notebook()
+ADG.show_buttons(filter_=["physics"])
+ADG.show("./page.html")
