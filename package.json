@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "express": "^4.18.2",
+    "git-truck": "^1.3.2",
     "mongodb": "^5.1.0",
     "mongoose": "^7.0.1",
     "pg": "^8.10.0"
