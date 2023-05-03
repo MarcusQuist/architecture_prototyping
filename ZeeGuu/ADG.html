@@ -37,7 +37,7 @@
              #mynetwork {
                  width: 100%;
                  height: 800px;
-                 background-color: #222222;
+                 background-color: #ffffff;
                  border: 1px solid lightgray;
                  position: relative;
                  float: left;
@@ -73,11 +73,11 @@
                             >
                                 <option selected>Select a Node by ID</option>
                                 
-                                    <option value="zeeguu">zeeguu</option>
+                                    <option value="zeeguu.api">zeeguu.api</option>
                                 
                                     <option value="zeeguu.core">zeeguu.core</option>
                                 
-                                    <option value="zeeguu.api">zeeguu.api</option>
+                                    <option value="zeeguu">zeeguu</option>
                                 
                             </select>
                         </div>
@@ -133,8 +133,8 @@
                   
 
                   // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "zeeguu", "label": "zeeguu", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "zeeguu.core", "label": "zeeguu.core", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "zeeguu.api", "label": "zeeguu.api", "shape": "dot"}]);
-                  edges = new vis.DataSet([{"arrowStrikethrough": false, "arrows": "to", "from": "zeeguu.core", "label": "2", "to": "zeeguu", "width": 0.1}, {"arrowStrikethrough": false, "arrows": "to", "from": "zeeguu.core", "label": "4", "to": "zeeguu.api", "width": 0.2}, {"arrowStrikethrough": false, "arrows": "to", "from": "zeeguu.api", "label": "90", "to": "zeeguu.core", "width": 4.5}, {"arrowStrikethrough": false, "arrows": "to", "from": "zeeguu.api", "label": "1", "to": "zeeguu", "width": 0.05}]);
+                  nodes = new vis.DataSet([{"color": "#fe0001", "font": {"color": "black"}, "id": "zeeguu.api", "label": "zeeguu.api", "mass": 43054.89031516429, "shape": "dot", "size": 43.054890315164286}, {"color": "#c70038", "font": {"color": "black"}, "id": "zeeguu.core", "label": "zeeguu.core", "mass": 100000.0, "shape": "dot", "size": 100.0}, {"color": "#0000ff", "font": {"color": "black"}, "id": "zeeguu", "label": "zeeguu", "mass": 10000.0, "shape": "dot", "size": 10.0}]);
+                  edges = new vis.DataSet([{"arrowStrikethrough": false, "arrows": "to", "color": "black", "from": "zeeguu.api", "label": "90", "to": "zeeguu.core", "width": 4.5}, {"arrowStrikethrough": false, "arrows": "to", "color": "black", "from": "zeeguu.api", "label": "1", "to": "zeeguu", "width": 0.05}, {"arrowStrikethrough": false, "arrows": "to", "color": "black", "from": "zeeguu.core", "label": "2", "to": "zeeguu", "width": 0.1}, {"arrowStrikethrough": false, "arrows": "to", "color": "black", "from": "zeeguu.core", "label": "4", "to": "zeeguu.api", "width": 0.2}]);
 
                   nodeColors = {};
                   allNodes = nodes.get({ returnType: "Object" });
@@ -158,7 +158,7 @@
         },
         "smooth": {
             "enabled": true,
-            "type": "dynamic"
+            "type": "discrete"
         }
     },
     "interaction": {
