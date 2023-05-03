@@ -18,6 +18,8 @@ from churn import get_commit_activity, get_lines_of_code_activity
 # Warning: this must end in /
 CODE_ROOT_FOLDER = "api/"
 
+color_legend = [(0, 500, 'blue'), (500, 1000, 'lightblue'), (1000, 1500, 'orange'), (1500, 2000, 'red')]
+
 
 def file_path(file_name):
     return CODE_ROOT_FOLDER + file_name
@@ -144,9 +146,10 @@ def dependencies_graph():
 
 # ========================================================================
 # Creates the abstracted graph containing only the defined interesting top level modules
+
 def abstracted_to_top_level(G, depth=1):
-    package_activity = get_commit_activity(depth)
-    lines_activity = get_lines_of_code_activity(depth)
+    # package_activity = get_commit_activity(depth)
+    # lines_activity = get_lines_of_code_activity(depth)
 
     aG = Network(
         height="800px",
@@ -157,14 +160,12 @@ def abstracted_to_top_level(G, depth=1):
         select_menu=True,
     )
     for node in G.nodes:
-        #print("AG: " + str(package_activity[top_level_package(node["id"], depth)]))
         aG.add_node(top_level_package(node["id"], depth))
     for edge in G.edges:
         src = top_level_package(edge["from"], depth)
         dst = top_level_package(edge["to"], depth)
 
         if src != dst:
-            #print(src)
             aG.add_edge(src, dst)
 
     filteredAg = Network(
@@ -194,8 +195,16 @@ def abstracted_to_top_level(G, depth=1):
 
     for node in aG.nodes:
         if node["id"] in new_nodes:
-            #print("fAG: " + str(package_activity[top_level_package(node["id"], depth)]))
-            filteredAg.add_node(node["id"], color=get_color(package_activity[top_level_package(node["id"], depth)]), size=scale_value(lines_activity[top_level_package(node["id"], depth)]), mass=scale_value(lines_activity[top_level_package(node["id"], depth)]))
+            top_level_package_name = top_level_package(node["id"], depth)
+            
+            # color = get_color(package_activity[top_level_package_name])
+            # size = scale_value(lines_activity[top_level_package_name])
+            # mass = scale_value(lines_activity[top_level_package_name])
+            color = "red"
+            size = 10
+            mass = 10
+            title = str(mass)
+            filteredAg.add_node(node["id"], color=color, size=size, mass=mass, title=title)
 
     edge_counts = {}
     for edge in new_edges:
@@ -208,7 +217,6 @@ def abstracted_to_top_level(G, depth=1):
         else:
             edge_counts[key] = 1
             filteredAg.add_edge(edge["from"], edge["to"], arrowStrikethrough = False, color="black")
-    #print(edge_counts)
 
     for edge in filteredAg.edges:
         source = edge["from"]
@@ -225,6 +233,10 @@ def abstracted_to_top_level(G, depth=1):
 # ========================================================================
 from IPython.display import display, HTML
 
+# ========================================================================
+# Color bar
+# ========================================================================
+color_legend = [(0, 500, 'blue'), (500, 1000, 'lightblue'), (1000, 1500, 'orange'), (1500, 2000, 'red')]
 
 # ========================================================================
 # Dependencies graph containing all files in the repository
@@ -236,26 +248,23 @@ DG.force_atlas_2based()
 DG.show_buttons(filter_=["physics"])
 DG.show("./page.html")
 
+# ========================================================================
+# Abstracted dependencies graph containing only the 2 top level files in the repository (zeeguu, zeeguu.core, zeeguu.api)
+# ========================================================================
 # ADG = abstracted_to_top_level(DG, 2)
 # ADG.toggle_physics(False)
 # ADG.prep_notebook()
 # ADG.force_atlas_2based()
 # ADG.show_buttons(filter_=["physics"])
-# ADG.show("./page.html")
+# ADG.show("./ADG.html")
 
 # ========================================================================
-# Abstracted dependencies graph containing only the 2 top level files in the repository (zeeguu, zeeguu.core, zeeguu.api)
+# Abstracted dependencies graph containing only the 3 top level files in the repository
 # ========================================================================
-ADG = abstracted_to_top_level(DG, 2)
-ADG.toggle_physics(False)
-ADG.prep_notebook()
-ADG.force_atlas_2based()
-ADG.show_buttons(filter_=["physics"])
-ADG.show("./ADG.html")
-
 ADG3 = abstracted_to_top_level(DG, 3)
 ADG3.toggle_physics(False)
 ADG3.prep_notebook()
 ADG3.force_atlas_2based()
 ADG3.show_buttons(filter_=["physics"])
 ADG3.show("./ADG3.html")
+

@@ -104,25 +104,7 @@ def get_commit_activity(depth=1):
 
     sorted(package_activity.items(), key=lambda x: x[1], reverse=True)
     return package_activity
-
-
 # ========================================================================
-# LINE COUNT
-# ========================================================================
-
-# def count_lines_of_code():
-#     loc_counts = {}
-#     for commit in get_all_commits():
-#         for modification in commit.modified_files:
-#             try:
-#                 if modification.filename.endswith(".py"):
-#                     loc_counts[modification.filename] = loc_counts.get(modification.filename, 0) + modification.added_lines
-#             except:
-#                 pass
-#     return loc_counts
-
-# # Test the function
-# print(count_lines_of_code())
 
 import os
 
@@ -163,5 +145,5 @@ def get_lines_of_code_activity(depth=1):
         l2_module = top_level_package(module_name_from_rel_path(filepath), depth)
         package_activity[l2_module] += count
 
-    print(sorted(package_activity.items(), key=lambda x: x[1], reverse=True))
+    # print(sorted(package_activity.items(), key=lambda x: x[1], reverse=True))
     return package_activity
