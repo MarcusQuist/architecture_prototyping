@@ -3,10 +3,13 @@ import sys
 sys.version
 import pathlib
 from pathlib import Path
+from node_settings import get_color, scale_value
+from churn import get_commit_activity, get_lines_of_code_activity
 
 # Kør i CMD
 # pip3 install gitpython
 # pip3 install pyvis
+# pip3 install pydriller
 # git clone https://github.com/zeeguu/api.git
 
 
@@ -59,6 +62,11 @@ def import_from_line(line):
         return y.group(1)
     except:
         return None
+    
+# ========================================================================
+def top_level_package(module_name, depth=1):
+    components = module_name.split(".")
+    return ".".join(components[:depth])
 
 
 # ========================================================================
@@ -87,6 +95,7 @@ def interesting_module(module_name):
 # ========================================================================
 # Creates the first graph with all intereseting modules represented
 from pyvis.network import Network
+from IPython.core.display import HTML
 
 def addEdges(G, module_name, file_path):
     #print(module_name)
@@ -104,8 +113,8 @@ def dependencies_graph():
         height="800px",
         width="100%",
         directed=True,
-        bgcolor="#222222",
-        font_color="white",
+        bgcolor="#ffffff",
+        font_color="black",
         select_menu=True,
     )
 
@@ -123,7 +132,7 @@ def dependencies_graph():
             if _import not in G.nodes and interesting_module(_import):
                 G.add_node(_import)
                 G.add_edge(module_name, _import)
-        
+
     # files = Path("./api").rglob("*.py")
     # for file in files:
     #     file_path = str(file)
@@ -134,23 +143,21 @@ def dependencies_graph():
 
 
 # ========================================================================
-def top_level_package(module_name, depth=1):
-    components = module_name.split(".")
-    return ".".join(components[:depth])
-
-
-# ========================================================================
 # Creates the abstracted graph containing only the defined interesting top level modules
 def abstracted_to_top_level(G, depth=1):
+    package_activity = get_commit_activity(depth)
+    lines_activity = get_lines_of_code_activity(depth)
+
     aG = Network(
         height="800px",
         width="100%",
         directed=True,
-        bgcolor="#222222",
-        font_color="white",
+        font_color="black",
+        bgcolor="#ffffff",
         select_menu=True,
     )
     for node in G.nodes:
+        #print("AG: " + str(package_activity[top_level_package(node["id"], depth)]))
         aG.add_node(top_level_package(node["id"], depth))
     for edge in G.edges:
         src = top_level_package(edge["from"], depth)
@@ -159,18 +166,22 @@ def abstracted_to_top_level(G, depth=1):
         if src != dst:
             #print(src)
             aG.add_edge(src, dst)
-    
+
     filteredAg = Network(
         height="800px",
         width="100%",
         directed=True,
-        bgcolor="#222222",
-        font_color="white",
+        bgcolor="#ffffff",
+        font_color="black",
         select_menu=True,
     )
-        
-    filteredAg.set_edge_smooth('dynamic')
-    
+
+    # SET EDGE BEHAVIOR
+    # NOTE: When using 'dynamic', the edges will have an invisible support node guiding the shape. 
+    # This node is part of the physics simulation. Default is set to 'continous'.
+    filteredAg.set_edge_smooth('discrete')  
+
+
     # Creates a new set of nodes and edges containing to make possible a way to count the edges,
     # and subsequently give them a specific width. Edges with the same source and target are only added once.
     # The witdh is determined by the number of times you meet an edge with the same source and target - which is captured in a dictionary
@@ -180,29 +191,30 @@ def abstracted_to_top_level(G, depth=1):
         new_nodes.add(edge["from"])
         new_nodes.add(edge["to"])
         new_edges.append(edge)
-    
+
     for node in aG.nodes:
         if node["id"] in new_nodes:
-            filteredAg.add_node(node["id"])
-    
+            #print("fAG: " + str(package_activity[top_level_package(node["id"], depth)]))
+            filteredAg.add_node(node["id"], color=get_color(package_activity[top_level_package(node["id"], depth)]), size=scale_value(lines_activity[top_level_package(node["id"], depth)]), mass=scale_value(lines_activity[top_level_package(node["id"], depth)]))
+
     edge_counts = {}
     for edge in new_edges:
         source = edge["from"]
         target = edge["to"]
         key = (source, target)
-        
+
         if key in edge_counts:
             edge_counts[key] += 1
         else:
             edge_counts[key] = 1
-            filteredAg.add_edge(edge["from"], edge["to"], arrowStrikethrough = False)
-    print(edge_counts)
-    
+            filteredAg.add_edge(edge["from"], edge["to"], arrowStrikethrough = False, color="black")
+    #print(edge_counts)
+
     for edge in filteredAg.edges:
         source = edge["from"]
         target = edge["to"]
         key = (source, target)
-        
+
         if key in edge_counts:
             edge["width"] = edge_counts[key] * 0.05
             edge["label"] = str(edge_counts[key])
