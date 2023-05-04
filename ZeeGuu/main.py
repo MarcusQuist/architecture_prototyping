@@ -148,8 +148,8 @@ def dependencies_graph():
 # Creates the abstracted graph containing only the defined interesting top level modules
 
 def abstracted_to_top_level(G, depth=1):
-    # package_activity = get_commit_activity(depth)
-    # lines_activity = get_lines_of_code_activity(depth)
+    package_activity = get_commit_activity(depth)
+    lines_activity = get_lines_of_code_activity(depth)
 
     aG = Network(
         height="800px",
@@ -193,18 +193,24 @@ def abstracted_to_top_level(G, depth=1):
         new_nodes.add(edge["to"])
         new_edges.append(edge)
 
+    zero_nodes = []
+
     for node in aG.nodes:
         if node["id"] in new_nodes:
             top_level_package_name = top_level_package(node["id"], depth)
             
-            # color = get_color(package_activity[top_level_package_name])
-            # size = scale_value(lines_activity[top_level_package_name])
-            # mass = scale_value(lines_activity[top_level_package_name])
-            color = "red"
-            size = 10
-            mass = 10
-            title = str(mass)
-            filteredAg.add_node(node["id"], color=color, size=size, mass=mass, title=title)
+            lines = lines_activity[top_level_package_name]
+            if lines == 0:
+                zero_nodes.append(node["id"])
+                continue
+            color = get_color(package_activity[top_level_package_name])
+            size = scale_value(lines)
+            mass = scale_value(lines_activity[top_level_package_name]) * 0.3
+            #color = "red"
+            #size = 10
+            #mass = 10
+            label = "{}\n(LOC: {})".format(top_level_package_name, lines)
+            filteredAg.add_node(node["id"], color=color, size=size, mass=mass, label=label)
 
     edge_counts = {}
     for edge in new_edges:
@@ -216,6 +222,8 @@ def abstracted_to_top_level(G, depth=1):
             edge_counts[key] += 1
         else:
             edge_counts[key] = 1
+            if source in zero_nodes or target in zero_nodes:
+                continue
             filteredAg.add_edge(edge["from"], edge["to"], arrowStrikethrough = False, color="black")
 
     for edge in filteredAg.edges:
@@ -251,12 +259,12 @@ DG.show("./page.html")
 # ========================================================================
 # Abstracted dependencies graph containing only the 2 top level files in the repository (zeeguu, zeeguu.core, zeeguu.api)
 # ========================================================================
-# ADG = abstracted_to_top_level(DG, 2)
-# ADG.toggle_physics(False)
-# ADG.prep_notebook()
-# ADG.force_atlas_2based()
-# ADG.show_buttons(filter_=["physics"])
-# ADG.show("./ADG.html")
+ADG = abstracted_to_top_level(DG, 2)
+ADG.toggle_physics(False)
+ADG.prep_notebook()
+ADG.force_atlas_2based()
+ADG.show_buttons(filter_=["physics"])
+ADG.show("./ADG.html")
 
 # ========================================================================
 # Abstracted dependencies graph containing only the 3 top level files in the repository
