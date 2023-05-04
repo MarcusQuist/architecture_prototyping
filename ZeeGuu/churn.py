@@ -45,14 +45,6 @@ from pydriller import Repository
 def get_all_commits():
     return list(Repository(CODE_ROOT_FOLDER).traverse_commits())
 
-# def print_out_commit_details(commits):
-#   for commit in commits:
-#       print(commit)
-#       for each in commit.modified_files:
-#           print(f"{commit.author.name} {each.change_type} {each.filename}\n -{each.old_path}\n -{each.new_path}")
-
-# print_out_commit_details(all_commits[0:2])
-
 
 # ========================================================================
 # Count commits per file
