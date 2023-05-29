@@ -91,7 +91,7 @@ def imports_from_file(file):
 # ========================================================================
 # Extracts only the interesting modules - modules starting with zeeguu and which are not use for test cases
 def interesting_module(module_name):
-    return module_name.startswith("zeeguu") and not "test" in module_name
+    return module_name.startswith("zeeguu") and not "test" in module_name and not "core" in module_name
 
 
 # ========================================================================
@@ -203,6 +203,12 @@ def abstracted_to_top_level(G, depth=1):
             if lines == 0:
                 zero_nodes.append(node["id"])
                 continue
+            
+            commits = package_activity[top_level_package_name]
+            if commits < 25:
+                zero_nodes.append(node["id"])
+                continue
+
             color = get_color(package_activity[top_level_package_name])
             size = scale_value(lines)
             mass = scale_value(lines_activity[top_level_package_name]) * 0.3
@@ -269,7 +275,7 @@ ADG.show("./ADG.html")
 # ========================================================================
 # Abstracted dependencies graph containing only the 3 top level files in the repository
 # ========================================================================
-ADG3 = abstracted_to_top_level(DG, 3)
+ADG3 = abstracted_to_top_level(DG, 4)
 ADG3.toggle_physics(False)
 ADG3.prep_notebook()
 ADG3.force_atlas_2based()

@@ -90,9 +90,9 @@ def get_commit_activity(depth=1):
     commit_counts = get_commits_per_file(get_all_commits())
 
     for path, count in commit_counts.items():
-        if ".py" in str(path):
-            l2_module = top_level_package(module_name_from_rel_path(path), depth)
-            package_activity[l2_module] += count
+            if ".py" in str(path):
+                l2_module = top_level_package(module_name_from_rel_path(path), depth)
+                package_activity[l2_module] += count
 
     sorted(package_activity.items(), key=lambda x: x[1], reverse=True)
     return package_activity
